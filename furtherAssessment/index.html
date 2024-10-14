@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Further Assessment</title>
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5BC6RLTF');</script>
+    <!-- End Google Tag Manager -->
+
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+</head>
+<body>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5BC6RLTF"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <div id="formContainer">
+        <h2>Further Assessment Form</h2>
+        <form id="leadForm">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required>
+                <br>
+                
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required>
+                <br>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <br>
+                
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone" required>
+                <br>
+
+                <button type="submit" id="submitButton" onclick="submitForm()">Submit</button>
+        </form>
+        <div id="successMessage" class="successMessage">
+            <div id="successMessageText">
+                Thank you for your submission. Someone from our team will be reaching out to you shortly! 
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        function submitForm() {
+            const form = document.getElementById('leadForm');
+            const formData = new FormData(form);
+            
+            // Check if all required fields are filled out
+            let isValid = true;
+            for (const [key, value] of formData.entries()) {
+                if (!value) {
+                    isValid = false;
+                    break;
+                }
+            }
+    
+            // If not valid, display an error message and prevent form submission
+            if (!isValid) {
+                alert('Please fill out all required fields.');
+                return;
+            }
+    
+            // Proceed with form submission if valid
+            fetch('https://hooks.zapier.com/hooks/catch/20362427/2143j8i/', {
+                method: 'POST',
+
+                //convert data to JSON - CORS issue sending data via zapier
+                /*
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+                body: formData,
+                */
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display success message
+                document.getElementById('successMessage').style.display = 'flex';
+                
+                // Clear the form
+                form.reset();
+
+                // Push custom event to GTM dataLayer
+                
+                //without converting to JSON the data from the form is not passed
+                
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    'event': 'gtm.formSubmit', 
+                    'firstName': document.getElementById('firstName').value,
+                    'lastName': document.getElementById('lastName').value,
+                    'email': document.getElementById('email').value,
+                    'phone': document.getElementById('phone').value,
+                    'form_id': form.id 
+                });
+                
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+    
+</body>
+</html>
